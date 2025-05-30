@@ -26,12 +26,44 @@
               "listen": "test",
               "script": {
                 "exec": [
-                  "pm.test(\"Status code is 201\", function () {",
+                  "pm.test(\"Status code is 201 Created\", function () {",
                   "    pm.response.to.have.status(201);",
                   "});",
                   "const jsonData = pm.response.json();",
                   "pm.environment.set(\"createdUserId\", jsonData.id);",
-                  "pm.test(\"Response has id\", () => { pm.expect(jsonData).to.have.property('id'); });"
+                  "pm.test(\"Response has id\", () => { pm.expect(jsonData).to.have.property('id'); });",
+                  "pm.test(\"Response has correct name\", () => { pm.expect(jsonData.name).to.eql('Marko'); });",
+                  "pm.test(\"Response has correct surname\", () => { pm.expect(jsonData.surname).to.eql('Markovic'); });",
+                  "pm.test(\"Response has correct email\", () => { pm.expect(jsonData.email).to.eql('marko@example.com'); });",
+                  "pm.test(\"Response has correct phone number\", () => { pm.expect(jsonData.phoneNumber).to.eql('+381601234567'); });",
+                  "pm.test(\"Response has correct role\", () => { pm.expect(jsonData.role).to.eql('USER'); });"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Create User - Already Exists (Negative)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Marko\",\n  \"surname\": \"Markovic\",\n  \"phoneNumber\": \"+381601234567\",\n  \"email\": \"marko@example.com\",\n  \"password\": \"password123\",\n  \"role\": \"USER\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/users", "host": ["{{baseUrl}}"], "path": ["api", "users"] }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 409 Conflict\", () => pm.response.to.have.status(409));",
+                  "pm.test(\"Response indicates user already exists\", () => {",
+                  "    pm.expect(pm.response.text()).to.include(\"User already exists with email: marko@example.com\");",
+                  "});"
                 ],
                 "type": "text/javascript"
               }
@@ -50,8 +82,9 @@
               "listen": "test",
               "script": {
                 "exec": [
-                  "pm.test(\"Status code is 200\", () => pm.response.to.have.status(200));",
-                  "pm.test(\"Response is array\", () => pm.expect(pm.response.json()).to.be.an('array'));"
+                  "pm.test(\"Status code is 200 OK\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Response is an array\", () => pm.expect(pm.response.json()).to.be.an('array'));",
+                  "pm.test(\"Array is not empty\", () => pm.expect(pm.response.json().length).to.be.above(0));"
                 ],
                 "type": "text/javascript"
               }
@@ -74,9 +107,40 @@
               "listen": "test",
               "script": {
                 "exec": [
-                  "pm.test(\"Status code is 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Status code is 200 OK\", () => pm.response.to.have.status(200));",
                   "const jsonData = pm.response.json();",
-                  "pm.test(\"Response has email\", () => pm.expect(jsonData).to.have.property('email'));"
+                  "pm.test(\"Response has correct id\", () => { pm.expect(jsonData.id).to.eql(pm.environment.get(\"createdUserId\")); });",
+                  "pm.test(\"Response has correct email\", () => pm.expect(jsonData.email).to.eql('marko@example.com'));",
+                  "pm.test(\"Response has correct name\", () => { pm.expect(jsonData.name).to.eql('Marko'); });",
+                  "pm.test(\"Response has correct surname\", () => { pm.expect(jsonData.surname).to.eql('Markovic'); });",
+                  "pm.test(\"Response has correct phone number\", () => { pm.expect(jsonData.phoneNumber).to.eql('+381601234567'); });",
+                  "pm.test(\"Response has correct role\", () => { pm.expect(jsonData.role).to.eql('USER'); });"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get User By Id Not Found (Negative)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/users/99999",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "users", "99999"]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 404 Not Found\", () => pm.response.to.have.status(404));",
+                  "pm.test(\"Response indicates user not found\", () => {",
+                  "    pm.expect(pm.response.text()).to.include(\"User not found with id: 99999\");",
+                  "});"
                 ],
                 "type": "text/javascript"
               }
@@ -104,9 +168,12 @@
               "listen": "test",
               "script": {
                 "exec": [
-                  "pm.test(\"Status code is 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Status code is 200 OK\", () => pm.response.to.have.status(200));",
                   "const jsonData = pm.response.json();",
-                  "pm.test(\"Surname is updated\", () => pm.expect(jsonData.surname).to.eql(\"Markovic Updated\"));"
+                  "pm.test(\"Surname is updated\", () => pm.expect(jsonData.surname).to.eql(\"Markovic Updated\"));",
+                  "pm.test(\"Phone number is updated\", () => pm.expect(jsonData.phoneNumber).to.eql(\"+381601234568\"));",
+                  "pm.test(\"Role is updated\", () => pm.expect(jsonData.role).to.eql(\"ADMIN\"));",
+                  "pm.test(\"Email is unchanged\", () => pm.expect(jsonData.email).to.eql(\"marko@example.com\"));"
                 ],
                 "type": "text/javascript"
               }
@@ -129,7 +196,33 @@
               "listen": "test",
               "script": {
                 "exec": [
-                  "pm.test(\"Status code is 204\", () => pm.response.to.have.status(204));"
+                  "pm.test(\"Status code is 204 No Content\", () => pm.response.to.have.status(204));"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Delete User - Not Found (Negative)",
+          "request": {
+            "method": "DELETE",
+            "url": {
+              "raw": "{{baseUrl}}/api/users/99999",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "users", "99999"]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 404 Not Found\", () => pm.response.to.have.status(404));",
+                  "pm.test(\"Response indicates user not found\", () => {",
+                  "    pm.expect(pm.response.text()).to.include(\"User not found with id: 99999\");",
+                  "});"
                 ],
                 "type": "text/javascript"
               }
@@ -158,10 +251,40 @@
               "listen": "test",
               "script": {
                 "exec": [
-                  "pm.test(\"Status code is 201\", () => pm.response.to.have.status(201));",
+                  "pm.test(\"Status code is 201 Created\", () => pm.response.to.have.status(201));",
                   "const jsonData = pm.response.json();",
                   "pm.environment.set(\"createdProductId\", jsonData.id);",
-                  "pm.test(\"Response has description\", () => pm.expect(jsonData).to.have.property('description'));"
+                  "pm.test(\"Response has description\", () => pm.expect(jsonData.description).to.eql(\"Novi proizvod\"));",
+                  "pm.test(\"Response has picture\", () => pm.expect(jsonData.picture).to.eql(\"https://example.com/image.jpg\"));",
+                  "pm.test(\"Response has price\", () => pm.expect(jsonData.price).to.eql(1500));",
+                  "pm.test(\"Response has type\", () => pm.expect(jsonData.type).to.eql(\"FOOD\"));"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Create Product - Already Exists (Negative)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"description\": \"Novi proizvod\",\n  \"picture\": \"https://example.com/image-duplicate.jpg\",\n  \"price\": 1000,\n  \"type\": \"OTHER\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/products", "host": ["{{baseUrl}}"], "path": ["api", "products"] }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 409 Conflict\", () => pm.response.to.have.status(409));",
+                  "pm.test(\"Response indicates product already exists\", () => {",
+                  "    pm.expect(pm.response.text()).to.include(\"Product already exists with description: Novi proizvod\");",
+                  "});"
                 ],
                 "type": "text/javascript"
               }
@@ -180,8 +303,9 @@
               "listen": "test",
               "script": {
                 "exec": [
-                  "pm.test(\"Status code is 200\", () => pm.response.to.have.status(200));",
-                  "pm.test(\"Response is array\", () => pm.expect(pm.response.json()).to.be.an('array'));"
+                  "pm.test(\"Status code is 200 OK\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Response is an array\", () => pm.expect(pm.response.json()).to.be.an('array'));",
+                  "pm.test(\"Array is not empty\", () => pm.expect(pm.response.json().length).to.be.above(0));"
                 ],
                 "type": "text/javascript"
               }
@@ -204,9 +328,39 @@
               "listen": "test",
               "script": {
                 "exec": [
-                  "pm.test(\"Status code is 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Status code is 200 OK\", () => pm.response.to.have.status(200));",
                   "const jsonData = pm.response.json();",
-                  "pm.test(\"Response has description\", () => pm.expect(jsonData).to.have.property('description'));"
+                  "pm.test(\"Response has correct id\", () => { pm.expect(jsonData.id).to.eql(pm.environment.get(\"createdProductId\")); });",
+                  "pm.test(\"Response has correct description\", () => pm.expect(jsonData.description).to.eql(\"Novi proizvod\"));",
+                  "pm.test(\"Response has correct picture\", () => pm.expect(jsonData.picture).to.eql(\"https://example.com/image.jpg\"));",
+                  "pm.test(\"Response has correct price\", () => pm.expect(jsonData.price).to.eql(1500));",
+                  "pm.test(\"Response has correct type\", () => pm.expect(jsonData.type).to.eql(\"FOOD\"));"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Product By Id Not Found (Negative)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/products/99999",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "products", "99999"]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 404 Not Found\", () => pm.response.to.have.status(404));",
+                  "pm.test(\"Response indicates product not found\", () => {",
+                  "    pm.expect(pm.response.text()).to.include(\"Product not found with id: 99999\");",
+                  "});"
                 ],
                 "type": "text/javascript"
               }
@@ -234,9 +388,12 @@
               "listen": "test",
               "script": {
                 "exec": [
-                  "pm.test(\"Status code is 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Status code is 200 OK\", () => pm.response.to.have.status(200));",
                   "const jsonData = pm.response.json();",
-                  "pm.test(\"Description is updated\", () => pm.expect(jsonData.description).to.eql(\"Izmenjeni proizvod\"));"
+                  "pm.test(\"Description is updated\", () => pm.expect(jsonData.description).to.eql(\"Izmenjeni proizvod\"));",
+                  "pm.test(\"Picture is updated\", () => pm.expect(jsonData.picture).to.eql(\"https://example.com/changed-image.jpg\"));",
+                  "pm.test(\"Price is updated\", () => pm.expect(jsonData.price).to.eql(1600));",
+                  "pm.test(\"Type is updated\", () => pm.expect(jsonData.type).to.eql(\"DRINK\"));"
                 ],
                 "type": "text/javascript"
               }
@@ -259,7 +416,33 @@
               "listen": "test",
               "script": {
                 "exec": [
-                  "pm.test(\"Status code is 204\", () => pm.response.to.have.status(204));"
+                  "pm.test(\"Status code is 204 No Content\", () => pm.response.to.have.status(204));"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Delete Product - Not Found (Negative)",
+          "request": {
+            "method": "DELETE",
+            "url": {
+              "raw": "{{baseUrl}}/api/products/99999",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "products", "99999"]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 404 Not Found\", () => pm.response.to.have.status(404));",
+                  "pm.test(\"Response indicates product not found\", () => {",
+                  "    pm.expect(pm.response.text()).to.include(\"Product not found with id: 99999\");",
+                  "});"
                 ],
                 "type": "text/javascript"
               }
@@ -288,10 +471,40 @@
               "listen": "test",
               "script": {
                 "exec": [
-                  "pm.test(\"Status code is 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Status code is 200 OK\", () => pm.response.to.have.status(200));",
                   "const jsonData = pm.response.json();",
                   "pm.environment.set(\"createdOfferId\", jsonData.id);",
-                  "pm.test(\"Response has title\", () => pm.expect(jsonData.title).to.eql(\"Specijalna ponuda\"));"
+                  "pm.test(\"Response has title\", () => pm.expect(jsonData.title).to.eql(\"Specijalna ponuda\"));",
+                  "pm.test(\"Response has correct userId\", () => pm.expect(jsonData.userId).to.eql(pm.environment.get(\"createdUserId\")));",
+                  "pm.test(\"Offer contains products\", () => pm.expect(jsonData.products).to.be.an('array').and.to.have.lengthOf(1));",
+                  "pm.test(\"Offer contains correct product ID\", () => pm.expect(jsonData.products[0].id).to.eql(pm.environment.get(\"createdProductId\")));"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Create Offer - Missing Products (Negative)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Ponuda bez proizvoda\",\n  \"userId\": {{createdUserId}},\n  \"productIds\": []\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/offers", "host": ["{{baseUrl}}"], "path": ["api", "offers"] }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 400 Bad Request\", () => pm.response.to.have.status(400));",
+                  "pm.test(\"Response indicates missing products\", () => {",
+                  "    pm.expect(pm.response.text()).to.include(\"Offer must contain at least one product.\");",
+                  "});"
                 ],
                 "type": "text/javascript"
               }
@@ -310,8 +523,9 @@
               "listen": "test",
               "script": {
                 "exec": [
-                  "pm.test(\"Status code is 200\", () => pm.response.to.have.status(200));",
-                  "pm.test(\"Response is array\", () => pm.expect(pm.response.json()).to.be.an('array'));"
+                  "pm.test(\"Status code is 200 OK\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Response is an array\", () => pm.expect(pm.response.json()).to.be.an('array'));",
+                  "pm.test(\"Array is not empty\", () => pm.expect(pm.response.json().length).to.be.above(0));"
                 ],
                 "type": "text/javascript"
               }
@@ -334,9 +548,39 @@
               "listen": "test",
               "script": {
                 "exec": [
-                  "pm.test(\"Status code is 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Status code is 200 OK\", () => pm.response.to.have.status(200));",
                   "const jsonData = pm.response.json();",
-                  "pm.test(\"Response has title\", () => pm.expect(jsonData.title).to.eql(\"Specijalna ponuda\"));"
+                  "pm.test(\"Response has correct id\", () => { pm.expect(jsonData.id).to.eql(pm.environment.get(\"createdOfferId\")); });",
+                  "pm.test(\"Response has correct title\", () => pm.expect(jsonData.title).to.eql(\"Specijalna ponuda\"));",
+                  "pm.test(\"Response has correct userId\", () => pm.expect(jsonData.userId).to.eql(pm.environment.get(\"createdUserId\")));",
+                  "pm.test(\"Offer contains products\", () => pm.expect(jsonData.products).to.be.an('array').and.to.have.lengthOf(1));",
+                  "pm.test(\"Offer contains correct product ID\", () => pm.expect(jsonData.products[0].id).to.eql(pm.environment.get(\"createdProductId\")));"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Offer By Id Not Found (Negative)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/offers/99999",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "offers", "99999"]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 404 Not Found\", () => pm.response.to.have.status(404));",
+                  "pm.test(\"Response indicates offer not found\", () => {",
+                  "    pm.expect(pm.response.text()).to.include(\"Offer not found with id: 99999\");",
+                  "});"
                 ],
                 "type": "text/javascript"
               }
@@ -359,7 +603,33 @@
               "listen": "test",
               "script": {
                 "exec": [
-                  "pm.test(\"Status code is 204\", () => pm.response.to.have.status(204));"
+                  "pm.test(\"Status code is 204 No Content\", () => pm.response.to.have.status(204));"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Delete Offer - Not Found (Negative)",
+          "request": {
+            "method": "DELETE",
+            "url": {
+              "raw": "{{baseUrl}}/api/offers/99999",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "offers", "99999"]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 404 Not Found\", () => pm.response.to.have.status(404));",
+                  "pm.test(\"Response indicates offer not found\", () => {",
+                  "    pm.expect(pm.response.text()).to.include(\"Offer not found with id: 99999\");",
+                  "});"
                 ],
                 "type": "text/javascript"
               }
