@@ -28,14 +28,26 @@ public class OfferService {
     }
 
     public OfferResponse createOffer(CreateOfferRequest request) {
+        if (request.getProductIds() == null || request.getProductIds().isEmpty()) {
+            throw new IllegalArgumentException("Offer must contain at least one product.");
+        }
+
         User user = userRepository.findById(request.getUserId())
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
 
         List<Product> products = productRepository.findAllById(request.getProductIds());
+        if (products.size() != request.getProductIds().size()) {
+            throw new IllegalArgumentException("Some products not found");
+        }
 
-        Offer offer = new Offer(request.getTitle(), user, products);
-        Offer saved = offerRepository.save(offer);
-        return new OfferResponse(saved);
+        Offer offer = new Offer();
+        offer.setTitle(request.getTitle());
+        offer.setUser(user);
+        offer.setProducts(products);
+
+        Offer savedOffer = offerRepository.save(offer);
+
+        return new OfferResponse(savedOffer);
     }
 
     public List<OfferResponse> getAllOffers() {

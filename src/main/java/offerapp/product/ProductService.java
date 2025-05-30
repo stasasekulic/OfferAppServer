@@ -22,7 +22,6 @@ public class ProductService {
     }
 
     public ProductResponse createProduct(CreateProductRequest request) {
-        // Provera da li već postoji proizvod sa istim opisom
         if (productRepository.existsByDescription(request.getDescription())) {
             throw new ProductAlreadyExistsException(
                     "Product already exists with description: " + request.getDescription());

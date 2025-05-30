@@ -2,7 +2,9 @@ package offerapp.offer.dto;
 
 import offerapp.offer.Offer;
 import offerapp.product.Product;
+import offerapp.product.dto.ProductResponse;
 import offerapp.user.User;
+import offerapp.user.dto.UserResponse;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -10,23 +12,15 @@ import java.util.stream.Collectors;
 public class OfferResponse {
     private Long id;
     private String title;
-    private Long userId;
-    private List<Long> productIds;
+    private UserResponse user;
+    private List<ProductResponse> products;
 
-    public OfferResponse(Offer offer) {
+    public OfferResponse(offerapp.offer.Offer offer) {
         this.id = offer.getId();
         this.title = offer.getTitle();
-        this.userId = offer.getUser().getId();
-        this.productIds = offer.getProducts().stream()
-                .map(Product::getId)
+        this.user = new UserResponse(offer.getUser());
+        this.products = offer.getProducts().stream()
+                .map(ProductResponse::new)
                 .collect(Collectors.toList());
     }
-
-    public Long getId() { return id; }
-
-    public String getTitle() { return title; }
-
-    public Long getUserId() { return userId; }
-
-    public List<Long> getProductIds() { return productIds; }
 }

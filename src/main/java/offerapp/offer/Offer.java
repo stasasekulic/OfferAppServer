@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import offerapp.product.Product;
 import offerapp.user.User;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -16,24 +17,34 @@ public class Offer {
 
     private String title;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User user;
-
-    @ManyToMany
-    @JoinTable(
-            name = "offer_products",
-            joinColumns = @JoinColumn(name = "offer_id"),
-            inverseJoinColumns = @JoinColumn(name = "product_id")
-    )
-    private List<Product> products;
-
     public Offer() {}
 
     public Offer(String title, User user, List<Product> products) {
         this.title = title;
         this.user = user;
         this.products = products;
+    }
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
+
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinTable(
+            name = "offer_products",
+            joinColumns = @JoinColumn(name = "offer_id"),
+            inverseJoinColumns = @JoinColumn(name = "product_id")
+    )
+    private List<Product> products = new ArrayList<>();
+
+    public void addProduct(Product product) {
+        products.add(product);
+        product.getOffers().add(this);
+    }
+
+    public void removeProduct(Product product) {
+        products.remove(product);
+        product.getOffers().remove(this);
     }
 
     public Long getId() { return id; }

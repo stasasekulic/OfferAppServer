@@ -1,7 +1,10 @@
 package offerapp.user;
 
 import jakarta.persistence.*;
+import offerapp.offer.Offer;
 import offerapp.user.enums.UserRole;
+
+import java.util.List;
 
 @Entity
 @Table(name = "users")
@@ -28,6 +31,17 @@ public class User {
         this.password = password;
         this.phoneNumber = phoneNumber;
         this.role = role;
+    }
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Offer> offers;
+
+    public List<Offer> getOffers() {
+        return offers;
+    }
+
+    public void setOffers(List<Offer> offers) {
+        this.offers = offers;
     }
 
     public Long getId() {

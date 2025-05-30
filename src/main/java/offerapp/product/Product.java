@@ -2,12 +2,15 @@ package offerapp.product;
 
 
 import jakarta.persistence.*;
+import offerapp.offer.Offer;
 import offerapp.product.enums.ProductType;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "products")
 public class Product {
-
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,7 +31,13 @@ public class Product {
         this.type = type;
     }
 
+    @ManyToMany(mappedBy = "products")
+    private List<Offer> offers = new ArrayList<>();
+
     public Long getId() {  return id; }
+
+    public List<Offer> getOffers() { return offers; }
+    public void setOffers(List<Offer> offers) { this.offers = offers; }
 
     public String getDescription() {
         return description;
