@@ -2,7 +2,7 @@ package offerapp.offer.dto;
 
 import offerapp.offer.Offer;
 import offerapp.product.dto.ProductResponse;
-import offerapp.user.dto.UserResponse;
+// import offerapp.user.dto.UserResponse; // Nije više potrebno importovati pun UserResponse
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -10,13 +10,16 @@ import java.util.stream.Collectors;
 public class OfferResponse {
     private Long id;
     private String title;
-    private UserResponse user;
+    private Long userId; // Dodato
+    private String userEmail;
     private List<ProductResponse> products;
 
     public OfferResponse(Offer offer) {
         this.id = offer.getId();
         this.title = offer.getTitle();
-        this.user = new UserResponse(offer.getUser());
+        this.userId = offer.getUser() != null ? offer.getUser().getId() : null;
+        this.userEmail = offer.getUser() != null ? offer.getUser().getEmail() : null;
+
         this.products = offer.getProducts().stream()
                 .map(ProductResponse::new)
                 .collect(Collectors.toList());
@@ -30,8 +33,12 @@ public class OfferResponse {
         return title;
     }
 
-    public UserResponse getUser() {
-        return user;
+    public Long getUserId() {
+        return userId;
+    }
+
+    public String getUserEmail() {
+        return userEmail;
     }
 
     public List<ProductResponse> getProducts() {

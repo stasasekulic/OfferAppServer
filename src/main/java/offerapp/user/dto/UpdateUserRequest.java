@@ -8,6 +8,13 @@ public class UpdateUserRequest {
     private String phoneNumber;
     private UserRole role;
 
+    public UpdateUserRequest(String name, String surname, String phoneNumber, UserRole role) {
+        this.name = name;
+        this.surname = surname;
+        this.phoneNumber = phoneNumber;
+        this.role = role;
+    }
+
     public String getName() { return name; }
     public void setName(String name) { this.name = name; }
 
