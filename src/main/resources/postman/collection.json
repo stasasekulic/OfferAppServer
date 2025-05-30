@@ -1,0 +1,394 @@
+{
+  "info": {
+    "name": "OfferApp API",
+    "_postman_id": "offerapp-collection-001",
+    "description": "Testovi za OfferApp: Users, Products i Offers",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Users",
+      "item": [
+        {
+          "name": "Create User",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Marko\",\n  \"surname\": \"Markovic\",\n  \"phoneNumber\": \"+381601234567\",\n  \"email\": \"marko@example.com\",\n  \"password\": \"password123\",\n  \"role\": \"USER\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/users", "host": ["{{baseUrl}}"], "path": ["api", "users"] }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 201\", function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "const jsonData = pm.response.json();",
+                  "pm.environment.set(\"createdUserId\", jsonData.id);",
+                  "pm.test(\"Response has id\", () => { pm.expect(jsonData).to.have.property('id'); });"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get All Users",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/api/users", "host": ["{{baseUrl}}"], "path": ["api", "users"] }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Response is array\", () => pm.expect(pm.response.json()).to.be.an('array'));"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get User By Id",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/users/{{createdUserId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "users", "{{createdUserId}}"]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", () => pm.response.to.have.status(200));",
+                  "const jsonData = pm.response.json();",
+                  "pm.test(\"Response has email\", () => pm.expect(jsonData).to.have.property('email'));"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Update User",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Marko\",\n  \"surname\": \"Markovic Updated\",\n  \"phoneNumber\": \"+381601234568\",\n  \"role\": \"ADMIN\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/users/{{createdUserId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "users", "{{createdUserId}}"]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", () => pm.response.to.have.status(200));",
+                  "const jsonData = pm.response.json();",
+                  "pm.test(\"Surname is updated\", () => pm.expect(jsonData.surname).to.eql(\"Markovic Updated\"));"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Delete User",
+          "request": {
+            "method": "DELETE",
+            "url": {
+              "raw": "{{baseUrl}}/api/users/{{createdUserId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "users", "{{createdUserId}}"]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 204\", () => pm.response.to.have.status(204));"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Products",
+      "item": [
+        {
+          "name": "Create Product",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"description\": \"Novi proizvod\",\n  \"picture\": \"https://example.com/image.jpg\",\n  \"price\": 1500,\n  \"type\": \"FOOD\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/products", "host": ["{{baseUrl}}"], "path": ["api", "products"] }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 201\", () => pm.response.to.have.status(201));",
+                  "const jsonData = pm.response.json();",
+                  "pm.environment.set(\"createdProductId\", jsonData.id);",
+                  "pm.test(\"Response has description\", () => pm.expect(jsonData).to.have.property('description'));"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get All Products",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/api/products", "host": ["{{baseUrl}}"], "path": ["api", "products"] }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Response is array\", () => pm.expect(pm.response.json()).to.be.an('array'));"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Product By Id",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/products/{{createdProductId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "products", "{{createdProductId}}"]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", () => pm.response.to.have.status(200));",
+                  "const jsonData = pm.response.json();",
+                  "pm.test(\"Response has description\", () => pm.expect(jsonData).to.have.property('description'));"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Update Product",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"description\": \"Izmenjeni proizvod\",\n  \"picture\": \"https://example.com/changed-image.jpg\",\n  \"price\": 1600,\n  \"type\": \"DRINK\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/products/{{createdProductId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "products", "{{createdProductId}}"]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", () => pm.response.to.have.status(200));",
+                  "const jsonData = pm.response.json();",
+                  "pm.test(\"Description is updated\", () => pm.expect(jsonData.description).to.eql(\"Izmenjeni proizvod\"));"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Delete Product",
+          "request": {
+            "method": "DELETE",
+            "url": {
+              "raw": "{{baseUrl}}/api/products/{{createdProductId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "products", "{{createdProductId}}"]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 204\", () => pm.response.to.have.status(204));"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Offers",
+      "item": [
+        {
+          "name": "Create Offer",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Specijalna ponuda\",\n  \"userId\": {{createdUserId}},\n  \"productIds\": [{{createdProductId}}]\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/offers", "host": ["{{baseUrl}}"], "path": ["api", "offers"] }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", () => pm.response.to.have.status(200));",
+                  "const jsonData = pm.response.json();",
+                  "pm.environment.set(\"createdOfferId\", jsonData.id);",
+                  "pm.test(\"Response has title\", () => pm.expect(jsonData.title).to.eql(\"Specijalna ponuda\"));"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get All Offers",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/api/offers", "host": ["{{baseUrl}}"], "path": ["api", "offers"] }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Response is array\", () => pm.expect(pm.response.json()).to.be.an('array'));"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Offer By Id",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/offers/{{createdOfferId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "offers", "{{createdOfferId}}"]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", () => pm.response.to.have.status(200));",
+                  "const jsonData = pm.response.json();",
+                  "pm.test(\"Response has title\", () => pm.expect(jsonData.title).to.eql(\"Specijalna ponuda\"));"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Delete Offer",
+          "request": {
+            "method": "DELETE",
+            "url": {
+              "raw": "{{baseUrl}}/api/offers/{{createdOfferId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "offers", "{{createdOfferId}}"]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 204\", () => pm.response.to.have.status(204));"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080",
+      "type": "string"
+    },
+    {
+      "key": "createdUserId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "createdProductId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "createdOfferId",
+      "value": "",
+      "type": "string"
+    }
+  ]
+}
