@@ -7,6 +7,8 @@ import offerapp.product.enums.ProductType;
 @Entity
 @Table(name = "products")
 public class Product {
+
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -25,6 +27,8 @@ public class Product {
         this.price = price;
         this.type = type;
     }
+
+    public Long getId() {  return id; }
 
     public String getDescription() {
         return description;
