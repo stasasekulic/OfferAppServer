@@ -2,6 +2,7 @@ package offerapp.offer;
 
 import offerapp.offer.dto.CreateOfferRequest;
 import offerapp.offer.dto.OfferResponse;
+import offerapp.offer.enums.OfferStatus;
 import offerapp.product.Product;
 import offerapp.product.ProductRepository;
 import offerapp.user.User;
@@ -44,6 +45,7 @@ public class OfferService {
         offer.setTitle(request.getTitle());
         offer.setUser(user);
         offer.setProducts(products);
+        offer.setStatus(OfferStatus.ACTIVE);
 
         Offer savedOffer = offerRepository.save(offer);
 

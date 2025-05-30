@@ -1,6 +1,7 @@
 package offerapp.offer.dto;
 
 import offerapp.offer.Offer;
+import offerapp.offer.enums.OfferStatus; // Dodato
 import offerapp.product.dto.ProductResponse;
 
 import java.util.List;
@@ -12,6 +13,7 @@ public class OfferResponse {
     private Long userId;
     private String userEmail;
     private List<ProductResponse> products;
+    private OfferStatus status;
 
     public OfferResponse(Offer offer) {
         this.id = offer.getId();
@@ -22,6 +24,7 @@ public class OfferResponse {
         this.products = offer.getProducts().stream()
                 .map(ProductResponse::new)
                 .collect(Collectors.toList());
+        this.status = offer.getStatus();
     }
 
     public Long getId() {
@@ -42,5 +45,9 @@ public class OfferResponse {
 
     public List<ProductResponse> getProducts() {
         return products;
+    }
+
+    public OfferStatus getStatus() {
+        return status;
     }
 }

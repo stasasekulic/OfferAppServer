@@ -1,12 +1,17 @@
 package offerapp.product;
 
+import offerapp.offer.Offer; // Dodato
+import offerapp.offer.OfferRepository; // Dodato
+import offerapp.offer.enums.OfferStatus; // Dodato
 import offerapp.product.dto.CreateProductRequest;
 import offerapp.product.dto.UpdateProductRequest;
 import offerapp.product.dto.ProductResponse;
 import offerapp.product.exception.ProductAlreadyExistsException;
+import offerapp.product.exception.ProductInUseException;
 import offerapp.product.exception.ProductNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -15,10 +20,12 @@ import java.util.stream.Collectors;
 public class ProductService {
 
     private final ProductRepository productRepository;
+    private final OfferRepository offerRepository;
 
     @Autowired
-    public ProductService(ProductRepository productRepository) {
+    public ProductService(ProductRepository productRepository, OfferRepository offerRepository) {
         this.productRepository = productRepository;
+        this.offerRepository = offerRepository;
     }
 
     public ProductResponse createProduct(CreateProductRequest request) {
@@ -62,10 +69,29 @@ public class ProductService {
         return new ProductResponse(updated);
     }
 
+    @Transactional
     public void deleteProduct(Long id) {
-        if (!productRepository.existsById(id)) {
-            throw new ProductNotFoundException("Product not found with id: " + id);
+        Product productToDelete = productRepository.findById(id)
+                .orElseThrow(() -> new ProductNotFoundException("Product not found with id: " + id));
+
+        List<Offer> associatedOffers = offerRepository.findByProducts_Id(id);
+
+        boolean hasActiveOffers = false;
+        for (Offer offer : associatedOffers) {
+            if (offer.getStatus() == OfferStatus.ACTIVE) {
+                hasActiveOffers = true;
+                break;
+            }
         }
-        productRepository.deleteById(id);
+
+        if (hasActiveOffers) {
+            throw new ProductInUseException("Product cannot be deleted because it is part of one or more active offers.");
+        } else {
+            for (Offer offer : associatedOffers) {
+                offer.removeProduct(productToDelete);
+                offerRepository.save(offer);
+            }
+            productRepository.deleteById(id);
+        }
     }
 }
