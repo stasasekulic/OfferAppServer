@@ -2,7 +2,6 @@ package offerapp.offer.dto;
 
 import offerapp.offer.Offer;
 import offerapp.product.dto.ProductResponse;
-// import offerapp.user.dto.UserResponse; // Nije više potrebno importovati pun UserResponse
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -10,7 +9,7 @@ import java.util.stream.Collectors;
 public class OfferResponse {
     private Long id;
     private String title;
-    private Long userId; // Dodato
+    private Long userId;
     private String userEmail;
     private List<ProductResponse> products;
 
