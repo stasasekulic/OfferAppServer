@@ -1,4 +1,7 @@
 package offerapp.product;
 
-public class ProductRepository {
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface ProductRepository extends JpaRepository<Product, Long> {
+    boolean existsByDescription(String description);
 }
