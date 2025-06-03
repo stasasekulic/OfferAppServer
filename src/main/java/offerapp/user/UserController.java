@@ -26,12 +26,12 @@ public class UserController {
         return new ResponseEntity<>(userService.createUser(request), HttpStatus.CREATED);
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/id/{id}")
     public ResponseEntity<UserResponse> getUserById(@PathVariable Long id) {
         return ResponseEntity.ok(userService.getUserById(id));
     }
 
-    @GetMapping("/{email}")
+    @GetMapping("/email/{email}")
     public ResponseEntity<UserResponse> getUserByEmail(@PathVariable String email) {
         return ResponseEntity.ok(userService.getByEmail(email));
     }
