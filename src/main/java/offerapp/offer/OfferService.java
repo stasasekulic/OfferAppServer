@@ -45,7 +45,7 @@ public class OfferService {
         offer.setTitle(request.getTitle());
         offer.setUser(user);
         offer.setProducts(products);
-        offer.setStatus(OfferStatus.ACTIVE);
+        offer.setStatus(OfferStatus.CREATED);
 
         Offer savedOffer = offerRepository.save(offer);
 

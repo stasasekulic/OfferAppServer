@@ -78,7 +78,8 @@ public class ProductService {
 
         boolean hasActiveOffers = false;
         for (Offer offer : associatedOffers) {
-            if (offer.getStatus() == OfferStatus.ACTIVE) {
+            OfferStatus status = offer.getStatus();
+            if (status != OfferStatus.CANCELED && status != OfferStatus.FINISHED) {
                 hasActiveOffers = true;
                 break;
             }

@@ -39,7 +39,7 @@ public class Offer {
         this.title = title;
         this.user = user;
         this.products = products;
-        this.status = OfferStatus.ACTIVE;
+        this.status = OfferStatus.CREATED;
     }
 
     public Offer(String title, User user, List<Product> products, OfferStatus status) {

@@ -1,7 +1,8 @@
 package offerapp.offer.enums;
 
 public enum OfferStatus {
-    ACTIVE,
+    CREATED,
+    MANUFACTURING,
     FINISHED,
     CANCELED
 }
