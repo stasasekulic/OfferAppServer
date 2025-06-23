@@ -53,10 +53,11 @@ public class ProductServiceTest {
         request.setDescription("New Product");
         request.setPicture("new.jpg");
         request.setPrice(100);
-        request.setType(ProductType.FRIDGE);
+        request.setType(ProductType.COOLING);
+        request.setRole(ProductRole.MAIN);
 
         Mockito.when(productRepository.existsByDescription("New Product")).thenReturn(false);
-        Product savedProduct = new Product("New Product", "new.jpg", 100, ProductType.OTHER);
+        Product savedProduct = new Product("New Product", "new.jpg", 100, ProductType.COOLING, ProductRole.MAIN);
         Mockito.when(productRepository.save(Mockito.any(Product.class))).thenReturn(savedProduct);
 
         ProductResponse response = productService.createProduct(request);
@@ -145,7 +146,7 @@ public class ProductServiceTest {
 
     @Test
     void testDeleteProductSuccessNoOffers() {
-        Mockito.when(productRepository.findById(5L)).thenReturn(Optional.of(new Product("Test", "", 0, ProductType.OTHER)));
+        Mockito.when(productRepository.findById(5L)).thenReturn(Optional.of(new Product("Test", "", 0, ProductType.COOLING, ProductRole.MAIN)));
         Mockito.when(offerRepository.findByProducts_Id(5L)).thenReturn(Collections.emptyList()); // Nema povezanih ponuda
 
         productService.deleteProduct(5L);
