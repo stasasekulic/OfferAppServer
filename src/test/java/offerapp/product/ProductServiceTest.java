@@ -115,9 +115,10 @@ public class ProductServiceTest {
         request.setDescription("Updated Product");
         request.setPicture("updated.jpg");
         request.setPrice(150);
-        request.setType(ProductType.OTHER);
+        request.setType(ProductType.COOLING);
+        request.setRole(ProductRole.ACCESSORIES);
 
-        Product existingProduct = new Product("Old Product", "old.jpg", 100, ProductType.FRIDGE);
+        Product existingProduct = new Product("Old Product", "old.jpg", 100, ProductType.COOLING, ProductRole.ACCESSORIES);
         Mockito.when(productRepository.findById(1L)).thenReturn(Optional.of(existingProduct));
         Mockito.when(productRepository.save(Mockito.any(Product.class))).thenReturn(existingProduct);
 
@@ -127,7 +128,7 @@ public class ProductServiceTest {
         Assertions.assertEquals("Updated Product", response.getDescription());
         Assertions.assertEquals("updated.jpg", response.getPicture());
         Assertions.assertEquals(150, response.getPrice());
-        Assertions.assertEquals(ProductType.OTHER, response.getType());
+        Assertions.assertEquals(ProductType.COOLING, response.getType());
 
         Mockito.verify(productRepository).save(Mockito.any(Product.class));
     }
