@@ -2,6 +2,7 @@ package offerapp.user;
 
 import offerapp.offer.Offer;
 import offerapp.product.Product;
+import offerapp.product.enums.ProductRole;
 import offerapp.product.enums.ProductType;
 import offerapp.user.dto.UpdateUserRequest;
 import offerapp.user.dto.UserResponse;
@@ -49,8 +50,8 @@ public class UserServiceTest {
 
     @Test
     void testFindUserWithOffersAndProducts() {
-        Product p1 = new Product("Opis 1", "slika1.jpg", 100, ProductType.FRIDGE);
-        Product p2 = new Product("Opis 2", "slika2.jpg", 200, ProductType.FREEZER);
+        Product p1 = new Product("Opis 1", "slika1.jpg", 100, ProductType.NEUTRAL, ProductRole.MAIN);
+        Product p2 = new Product("Opis 2", "slika2.jpg", 200, ProductType.INSTALLATION, ProductRole.MAIN);
 
         Offer offer = new Offer();
         offer.setTitle("Specijalna Ponuda");
@@ -174,9 +175,9 @@ public class UserServiceTest {
 
     @Test
     void testFindUserWithMultipleOffers() {
-        Product p1 = new Product("Laptop", "laptop.jpg", 1200, ProductType.FRIDGE);
-        Product p2 = new Product("Telefon", "phone.jpg", 800, ProductType.FREEZER);
-        Product p3 = new Product("Frižider", "fridge.jpg", 500, ProductType.FRIDGE);
+        Product p1 = new Product("Laptop", "laptop.jpg", 1200, ProductType.NEUTRAL, ProductRole.MAIN);
+        Product p2 = new Product("Telefon", "phone.jpg", 800, ProductType.NEUTRAL, ProductRole.MAIN);
+        Product p3 = new Product("Frižider", "fridge.jpg", 500, ProductType.COOLING, ProductRole.MAIN);
 
         Offer offer1 = new Offer();
         offer1.setTitle("Tehnika Akcija");

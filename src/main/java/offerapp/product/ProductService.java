@@ -38,7 +38,8 @@ public class ProductService {
                 request.getDescription(),
                 request.getPicture(),
                 request.getPrice(),
-                request.getType()
+                request.getType(),
+                request.getRole()
         );
         Product saved = productRepository.save(product);
         return new ProductResponse(saved);
@@ -64,6 +65,7 @@ public class ProductService {
         product.setPicture(request.getPicture());
         product.setPrice(request.getPrice());
         product.setType(request.getType());
+        product.setRole(request.getRole());
 
         Product updated = productRepository.save(product);
         return new ProductResponse(updated);

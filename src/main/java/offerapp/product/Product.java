@@ -3,6 +3,7 @@ package offerapp.product;
 
 import jakarta.persistence.*;
 import offerapp.offer.Offer;
+import offerapp.product.enums.ProductRole;
 import offerapp.product.enums.ProductType;
 
 import java.util.ArrayList;
@@ -22,13 +23,17 @@ public class Product {
     @Enumerated(EnumType.STRING)
     private ProductType type;
 
+    @Enumerated(EnumType.STRING)
+    private ProductRole role;
+
     public Product() {}
 
-    public Product(String description, String picture, Integer price, ProductType type) {
+    public Product(String description, String picture, Integer price, ProductType type, ProductRole role) {
         this.description = description;
         this.picture = picture;
         this.price = price;
         this.type = type;
+        this.role = role;
     }
 
     @ManyToMany(mappedBy = "products")
@@ -71,6 +76,14 @@ public class Product {
         this.type = type;
     }
 
+    public ProductRole getRole() {
+        return role;
+    }
+
+    public void setRole(ProductRole role) {
+        this.role = role;
+    }
+
     @Override
     public String toString() {
         return "Product{" +
@@ -78,6 +91,7 @@ public class Product {
                 ", description='" + description + '\'' +
                 ", price='" + price + '\'' +
                 ", type='" + type + '\'' +
+                ", role='" + role + '\'' +
                 '}';
     }
 }

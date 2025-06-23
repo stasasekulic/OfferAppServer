@@ -1,5 +1,6 @@
 package offerapp.product.dto;
 
+import offerapp.product.enums.ProductRole;
 import offerapp.product.enums.ProductType;
 
 public class CreateProductRequest {
@@ -7,6 +8,7 @@ public class CreateProductRequest {
     private String picture;
     private Integer price;
     private ProductType type;
+    private ProductRole role;
 
     public String getDescription() { return description; }
     public void setDescription(String description) { this.description = description; }
@@ -19,4 +21,7 @@ public class CreateProductRequest {
 
     public ProductType getType() { return type; }
     public void setType(ProductType type) { this.type = type; }
+
+    public ProductRole getRole() { return role; }
+    public void setRole(ProductRole role) { this.role = role; }
 }

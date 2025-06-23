@@ -5,6 +5,7 @@ import offerapp.offer.dto.OfferResponse;
 import offerapp.offer.exception.OfferNotFoundException;
 import offerapp.product.Product;
 import offerapp.product.ProductRepository;
+import offerapp.product.enums.ProductRole;
 import offerapp.product.enums.ProductType;
 import offerapp.user.User;
 import offerapp.user.UserRepository;
@@ -47,8 +48,8 @@ public class OfferServiceTest {
 
         User mockUser = new User("John", "Doe", "test@example.com", "1234567890123", "0601234567", UserRole.USER);
 
-        Product mockProduct1 = new Product("Laptop", "laptop.jpg", 1200, ProductType.OTHER);
-        Product mockProduct2 = new Product("Mouse", "mouse.jpg", 25, ProductType.FREEZER);
+        Product mockProduct1 = new Product("Laptop", "laptop.jpg", 1200, ProductType.COOLING, ProductRole.MAIN);
+        Product mockProduct2 = new Product("Mouse", "mouse.jpg", 25, ProductType.NEUTRAL, ProductRole.MAIN);
         List<Product> mockProducts = Arrays.asList(mockProduct1, mockProduct2);
 
         Mockito.when(userRepository.findById(1L)).thenReturn(Optional.of(mockUser));
@@ -112,8 +113,8 @@ public class OfferServiceTest {
         request.setProductIds(Arrays.asList(10L, 20L, 30L)); // Tražimo 3 proizvoda
 
         User mockUser = new User("John", "Doe", "test@example.com", "1234567890123", "0601234567", UserRole.USER);
-        Product mockProduct1 = new Product("Laptop", "laptop.jpg", 1200, ProductType.FRIDGE);
-        Product mockProduct2 = new Product("Mouse", "mouse.jpg", 25, ProductType.FRIDGE);
+        Product mockProduct1 = new Product("Laptop", "laptop.jpg", 1200, ProductType.COOLING, ProductRole.MAIN);
+        Product mockProduct2 = new Product("Mouse", "mouse.jpg", 25, ProductType.COOLING, ProductRole.MAIN);
         List<Product> foundProducts = Arrays.asList(mockProduct1, mockProduct2);
 
         Mockito.when(userRepository.findById(1L)).thenReturn(Optional.of(mockUser));
@@ -129,7 +130,7 @@ public class OfferServiceTest {
         User user1 = new User("User", "One", "user1@example.com", "1112223334445", "0601112233", UserRole.USER);
         user1.setId(1L);
 
-        Product prod1 = new Product("P1", "p1.jpg", 10, ProductType.OTHER);
+        Product prod1 = new Product("P1", "p1.jpg", 10, ProductType.INSTALLATION, ProductRole.MAIN);
 
         Offer offer1 = Mockito.spy(new Offer("Offer A", user1, Collections.singletonList(prod1)));
         Mockito.doReturn(1L).when(offer1).getId();
@@ -166,7 +167,7 @@ public class OfferServiceTest {
         User user = new User("Test", "User", "test@example.com", "9998887776665", "0619876543", UserRole.USER);
         user.setId(1L);
 
-        Product product = new Product("Test Product", "test.jpg", 100, ProductType.OTHER);
+        Product product = new Product("Test Product", "test.jpg", 100, ProductType.INSTALLATION, ProductRole.MAIN);
 
         Offer offer = Mockito.spy(new Offer("Found Offer", user, Collections.singletonList(product)));
         Mockito.doReturn(1L).when(offer).getId();

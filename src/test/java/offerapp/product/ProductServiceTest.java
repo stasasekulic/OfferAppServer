@@ -6,6 +6,7 @@ import offerapp.offer.enums.OfferStatus; // Dodato
 import offerapp.product.dto.CreateProductRequest;
 import offerapp.product.dto.ProductResponse;
 import offerapp.product.dto.UpdateProductRequest;
+import offerapp.product.enums.ProductRole;
 import offerapp.product.enums.ProductType;
 import offerapp.product.exception.ProductAlreadyExistsException;
 import offerapp.product.exception.ProductInUseException;
@@ -78,7 +79,7 @@ public class ProductServiceTest {
 
     @Test
     void testGetProductByIdFound() {
-        Product product = new Product("Test Product", "test.jpg", 50, ProductType.FRIDGE);
+        Product product = new Product("Test Product", "test.jpg", 50, ProductType.INSTALLATION, ProductRole.MAIN);
         Mockito.when(productRepository.findById(1L)).thenReturn(Optional.of(product));
 
         ProductResponse response = productService.getProductById(1L);
@@ -96,8 +97,8 @@ public class ProductServiceTest {
 
     @Test
     void testGetAllProducts() {
-        Product product1 = new Product("P1", "p1.jpg", 10, ProductType.OTHER);
-        Product product2 = new Product("P2", "p2.jpg", 20, ProductType.FREEZER);
+        Product product1 = new Product("P1", "p1.jpg", 10, ProductType.COOLING, ProductRole.MAIN);
+        Product product2 = new Product("P2", "p2.jpg", 20, ProductType.NEUTRAL, ProductRole.MAIN);
         Mockito.when(productRepository.findAll()).thenReturn(Arrays.asList(product1, product2));
 
         List<ProductResponse> products = productService.getAllProducts();
@@ -164,7 +165,7 @@ public class ProductServiceTest {
     @Test
     void testDeleteProductInActiveOffer() {
         Long productId = 5L;
-        Product productToDelete = new Product("Product in Active Offer", "img.jpg", 100, ProductType.OTHER);
+        Product productToDelete = new Product("Product in Active Offer", "img.jpg", 100, ProductType.INSTALLATION, ProductRole.MAIN);
 
         Mockito.when(productRepository.findById(productId)).thenReturn(Optional.of(productToDelete));
 
@@ -181,7 +182,7 @@ public class ProductServiceTest {
     @Test
     void testDeleteProductInFinishedOffer() {
         Long productId = 5L;
-        Product productToDelete = new Product("Product in Finished Offer", "img.jpg", 100, ProductType.OTHER);
+        Product productToDelete = new Product("Product in Finished Offer", "img.jpg", 100, ProductType.NEUTRAL, ProductRole.MAIN);
 
         Mockito.when(productRepository.findById(productId)).thenReturn(Optional.of(productToDelete));
 
